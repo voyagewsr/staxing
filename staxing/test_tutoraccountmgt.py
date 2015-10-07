@@ -1,11 +1,13 @@
 import unittest
-import pytest
 import sys
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
+
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as expect
+from selenium.webdriver.support.ui import WebDriverWait
+
 from pastasauce import PastaSauce, PastaDecorator
+from . import StaxHelper
 
 
 browsers = [{
@@ -39,107 +41,260 @@ browsers = [{
     "deviceOrientation": "portrait"
 }]
 # use 1 browser setup
-browsers = [browsers[2]]
-standard_window = (1024, 768)
+browsers = [browsers[3]]
+standard_window = (1440, 900)
 compressed_window = (700, 500)
-# skip control
-COMPLETE = True
-IN_PROGRESS = False
-INCOMPLETE = True
 
 
 @PastaDecorator.on_platforms(browsers)
 class TestTutorAcctMgt(unittest.TestCase):
     ''''''
     def setUp(self):
-        ''''''
         self.ps = PastaSauce()
+        self.helper = StaxHelper()
         self.desired_capabilities['name'] = self.id()
-        self.driver = webdriver.Remote(
-            command_executor='http://%s:%s@ondemand.saucelabs.com:80/wd/hub' %
-            (self.ps.get_user(), self.ps.get_access_key()),
-            desired_capabilities=self.desired_capabilities)
-        self.driver.implicitly_wait(10)
-
-    @pytest.mark.skipif(COMPLETE, reason='Complete')
-    def test_user_login_standard(self):
+        self.driver = StaxHelper.run_on(
+            StaxHelper.LOCAL, self.ps, self.desired_capabilities
+        )
+        self.driver.implicitly_wait(15)
+        self.wait = WebDriverWait(self.driver, 15)
         self.driver.set_window_size(*standard_window)
+
+    def test_user_login_standard(self):
+        # resize the window to the standard HISD monitor width
         size = self.driver.get_window_size()
         assert(standard_window == (size['width'], size['height'])), \
             ('Window size set to: ' + str(*size) +
              ', not ' + str(*standard_window))
-        self.driver.get('https://tutor-qa.openstax.org/')
+        # open the test URL and click the login button
+        self.driver.get(self.helper.user.url)
         assert('OpenStax Tutor' in self.driver.title), 'Unable to load page'
-        login = self.driver.find_element_by_link_text('Login')
-        login.click()
-        username = self.driver.find_element_by_id('auth_key')
-        username.send_keys('admin')
-        password = self.driver.find_element_by_id('password')
-        password.send_keys('password')
-        sign_in = self.driver.find_element_by_xpath('//button[text()=' +
-                                                    '"Sign in"]')
-        sign_in.click()
-        wait = WebDriverWait(self.driver, 15)
-        user_menu = wait.until(
-            expect.presence_of_element_located((By.CLASS_NAME,
-                                               'dropdown-toggle'))
-        )
-        user_menu.click()
-        assert('Log Out' in
-               self.driver.find_element(By.CLASS_NAME, 'logout').text)
+        self.driver.find_element(By.LINK_TEXT, 'Login').click()
+        # enter the username and password
+        self.driver.find_element(By.ID, 'auth_key'). \
+            send_keys(self.helper.admin.name)
+        self.driver.find_element(By.ID, 'password'). \
+            send_keys(self.helper.admin.password)
+        # click on the sign in button to log in
+        self.driver.find_element(
+            By.XPATH, '//button[text()="Sign in"]'
+        ).click()
+        # look for the user drop down menu and click to open it
+        self.wait.until(
+            expect.presence_of_element_located(
+                (By.CLASS_NAME, 'dropdown-toggle')
+            )
+        ).click()
+        # is the log out link visible?
+        logout = self.driver.find_element(By.CLASS_NAME, 'logout')
+        assert('Log Out' in logout.text), 'Log out not visible'
 
-    @pytest.mark.skipif(COMPLETE, reason='Complete')
     def test_user_login_compact(self):
+        # resize the window to be closer to a mobile display width
         self.driver.set_window_size(*compressed_window)
         size = self.driver.get_window_size()
         assert(compressed_window == (size['width'], size['height'])), \
             ('Window size set to: ' + str(*size) +
              ', not ' + str(*compressed_window))
-        self.driver.get('https://tutor-qa.openstax.org/')
+        # open the test URL and click the login button within the sub-menu
+        self.driver.get(self.helper.user.url)
         assert('OpenStax Tutor' in self.driver.title), 'Unable to load page'
-        wait = WebDriverWait(self.driver, 15)
-        user_menu = wait.until(
-            expect.presence_of_element_located((By.CLASS_NAME,
-                                               'navbar-toggle'))
+        user_menu = self.wait.until(
+            expect.presence_of_element_located(
+                (By.CLASS_NAME, 'navbar-toggle')
+            )
         )
         assert(user_menu.is_displayed()), 'Menu not visible'
         user_menu.click()
-        login = wait.until(
-            expect.presence_of_element_located((By.LINK_TEXT,
-                                               'Login'))
+        login = self.wait.until(
+            expect.presence_of_element_located(
+                (By.LINK_TEXT, 'Login')
+            )
         )
         assert(login.is_displayed()), 'Login link not visible'
         login.click()
-        username = self.driver.find_element_by_id('auth_key')
-        username.send_keys('admin')
-        password = self.driver.find_element_by_id('password')
-        password.send_keys('password')
-        sign_in = self.driver.find_element_by_xpath('//button[text()=' +
-                                                    '"Sign in"]')
-        sign_in.click()
-        user_menu = wait.until(
-            expect.presence_of_element_located((By.CLASS_NAME,
-                                               'navbar-toggle'))
+        # enter the username and password
+        self.driver.find_element(By.ID, 'auth_key'). \
+            send_keys(self.helper.admin.name)
+        self.driver.find_element(By.ID, 'password'). \
+            send_keys(self.helper.admin.password)
+        # click on the sign in button to log in
+        self.driver.find_element(
+            By.XPATH, '//button[text()="Sign in"]').click()
+        # look for the user drop down menu and click to open it
+        user_menu = self.wait.until(
+            expect.presence_of_element_located(
+                (By.CLASS_NAME, 'navbar-toggle')
+            )
         )
         assert(user_menu.is_displayed()), 'User menu not visible'
         user_menu.click()
-        user_sub_menu = wait.until(
-            expect.presence_of_element_located((By.CLASS_NAME,
-                                               'dropdown-toggle'))
-        )
-        user_sub_menu = self.driver.find_element(By.CLASS_NAME,
-                                                 'dropdown-toggle')
-        assert(user_sub_menu.is_displayed()), 'User sub-menu not visible'
-        user_sub_menu.click()
-        logout = self.driver.find_element(By.XPATH, '//button[@aria-label=' +
-                                          '"Sign out"]')
-        assert(logout.is_displayed()), 'Log Out not visible'
 
-    @pytest.mark.skipif(IN_PROGRESS, reason='In progress')
     def test_accounts_login(self):
+        # resize the window to the standard HISD monitor width
+        size = self.driver.get_window_size()
+        assert(standard_window == (size['width'], size['height'])), \
+            ('Window size set to: ' + str(*size) +
+             ', not ' + str(*standard_window))
+        # open the test URL and click the login button within the sub-menu
         self.driver.get('https://accounts-qa.openstax.org/')
         assert('Sign in with' in self.driver.title), 'Unable to load page'
-        assert(False), 'Incomplete test'
+        # enter the username and password
+        self.driver.find_element(By.ID, 'auth_key'). \
+            send_keys(self.helper.user.name)
+        self.driver.find_element(By.ID, 'password'). \
+            send_keys(self.helper.user.password)
+        # click on the sign in button to log in
+        self.driver.find_element(
+            By.XPATH, '//button[text()="Sign in"]').click()
+        # is the logged in user's login visible?
+        self.driver.find_element(
+            By.LINK_TEXT, self.helper.user.name).click()
+
+    def test_account_login_failure(self):
+        # resize the window to the standard HISD monitor width
+        size = self.driver.get_window_size()
+        assert(standard_window == (size['width'], size['height'])), \
+            ('Window size set to: ' + str(*size) +
+             ', not ' + str(*standard_window))
+        self.driver.get('https://accounts-qa.openstax.org/')
+        assert('Sign in with' in self.driver.title), 'Unable to load page'
+        username = self.driver.find_element(By.ID, 'auth_key')
+        username.send_keys('not_a_user_94720475')
+        password = self.driver.find_element(By.ID, 'password')
+        password.send_keys('failed_password')
+        sign_in = self.driver.find_element(By.XPATH, '//button[text()=' +
+                                                     '"Sign in"]')
+        sign_in.click()
+        error_message = self.driver.find_element(By.XPATH,
+                                                 '//p//strong/parent::*')
+        assert('Incorrect' in error_message.text)
+
+    def test_course_select(self):
+        # resize the window to the standard HISD monitor width
+        size = self.driver.get_window_size()
+        assert(standard_window == (size['width'], size['height'])), \
+            ('Window size set to: ' + str(*size) +
+             ', not ' + str(*standard_window))
+        self.driver.get(self.helper.user.url)
+        assert('OpenStax Tutor' in self.driver.title), 'Unable to load page'
+        login = self.wait.until(
+            expect.presence_of_element_located(
+                (By.LINK_TEXT, 'Login')
+            )
+        )
+        assert(login.is_displayed()), 'Login link not visible'
+        login.click()
+        username = self.driver.find_element(By.ID, 'auth_key')
+        username.send_keys(self.helper.teacher.name)
+        password = self.driver.find_element(By.ID, 'password')
+        password.send_keys(self.helper.teacher.password)
+        sign_in = self.driver.find_element(By.XPATH, '//button[text()=' +
+                                           '"Sign in"]')
+        sign_in.click()
+        course = self.wait.until(
+            expect.element_to_be_clickable(
+                (By.XPATH, '//div[@data-title="Physics"]//a')
+            )
+        )
+        course.click()
+        dashboard = self.wait.until(
+            expect.element_to_be_clickable(
+                (By.XPATH, '//a[@class="navbar-brand active"]')
+            )
+        )
+        assert('Physics' in dashboard.text)
+
+    def test_password_reset(self):
+        # resize the window to the standard HISD monitor width
+        size = self.driver.get_window_size()
+        assert(standard_window == (size['width'], size['height'])), \
+            ('Window size set to: ' + str(*size) +
+             ', not ' + str(*standard_window))
+        self.driver.set_window_size(*standard_window)
+        self.driver.get('https://accounts-qa.openstax.org/')
+        assert('Sign in with' in self.driver.title), 'Unable to load page'
+        link = self.driver.find_element(By.LINK_TEXT, 'Forgot password?')
+        link.click()
+        username = self.wait.until(
+            expect.visibility_of_element_located(
+                (By.ID, 'forgot_password_username')
+            )
+        )
+        username.send_keys(self.helper.email.name)
+        submit = self.driver.find_element(By.NAME, 'commit')
+        submit.click()
+        reset_message = self.wait.until(
+            expect.visibility_of_element_located(
+                (By.CLASS_NAME, 'ui-icon-info')
+            )
+        )
+        reset_message = reset_message.find_element(By.XPATH, '..')
+        assert('Password reset' in reset_message.text), 'Reset failed'
+        body = self.driver.find_element(By.TAG_NAME, 'body')
+        import platform
+        if platform.system() is 'Darwin':  # Mac
+            body.send_keys(Keys.COMMAND + 't')
+        else:
+            body.send_keys(Keys.CONTROL + 't')
+        self.driver.get('https://mail.google.com/')
+        assert('Gmail' in self.driver.title), 'Gmail login not available'
+        username = self.driver.find_element(By.ID, 'Email')
+        username.send_keys(self.helper.email.email)
+        next_button = self.driver.find_element(By.ID, 'next')
+        next_button.click()
+        password = self.driver.find_element(By.ID, 'Passwd')
+        password.send_keys(self.helper.email.password)
+        stay_signed_in = self.driver.find_element(By.ID, 'PersistentCookie')
+        if stay_signed_in.is_selected():
+            stay_signed_in.click()
+        next_button = self.driver.find_element(By.ID, 'signIn')
+        next_button.click()
+        try:
+            reset_email = self.wait.until(
+                expect.visibility_of_element_located(
+                    (By.CLASS_NAME, 'y6')
+                )
+            )
+        except:
+            raise(AssertionError('Email message not received'))
+        reset_email.click()
+        try:
+            reset_link = self.wait.until(
+                expect.presence_of_element_located(
+                    (By.XPATH, '//a[contains(@href, "accounts-qa")]')
+                )
+            )
+        except:
+            raise(AssertionError('Oops, wrong e-mail message'))
+        link = reset_link.get_attribute('href')
+        self.driver.close()
+        self.driver = StaxHelper.run_on(
+            StaxHelper.LOCAL, self.ps, self.desired_capabilities
+        )
+        self.driver.implicitly_wait(15)
+        self.driver.set_window_size(*standard_window)
+        self.wait = WebDriverWait(self.driver, 15)
+        self.driver.get(link)
+        new_password = self.wait.until(
+            expect.presence_of_element_located(
+                (By.XPATH, '//input[@name="reset_password[password]"]')
+            )
+        )
+        new_password.send_keys(self.helper.email.password)
+        repeat_password = self.driver.find_element(
+            By.ID, 'reset_password_password_confirmation'
+        )
+        repeat_password.send_keys(self.helper.email.password)
+        submit = self.driver.find_element(By.NAME, 'commit')
+        submit.click()
+        reset_message = self.wait.until(
+            expect.visibility_of_element_located(
+                (By.CLASS_NAME, 'ui-icon-info')
+            )
+        )
+        reset_message = reset_message.find_element(By.XPATH, '..')
+        assert('reset successfully' in reset_message.text)
 
     def tearDown(self):
         self.driver.quit()
