@@ -1,10 +1,11 @@
 import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-# from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as expect
 from selenium.webdriver.support.ui import WebDriverWait
 from requests import HTTPError
+
+from assignment import Assignment
 
 
 class StaxHelper(object):
@@ -12,7 +13,7 @@ class StaxHelper(object):
     LOCAL = False  # use ChromeDriver locally
     REMOTE = not LOCAL  # use Sauce Labs
     CONDENSED_WIDTH = 767  # pixels
-    WAIT_TIME = 15  # seconds
+    WAIT_TIME = Assignment.WAIT_TIME  # seconds
 
     def __init__(self):
         '''
@@ -29,7 +30,7 @@ class StaxHelper(object):
         '''
         Ready the correct WebDriver
         '''
-        if remote:
+        if remote:  # test on Sauce Labs
             if pasta_user is None:
                 raise(TypeError('Sauce Labs user required for remote testing'))
             return webdriver.Remote(
@@ -39,13 +40,20 @@ class StaxHelper(object):
                 ),
                 desired_capabilities=capabilities
             )
-        return webdriver.Chrome()
+        return webdriver.Chrome()  # test locally with ChromeDriver
 
 
 class User(object):
     '''
     General use class functions
     '''
+    import Assignment
+    READING = Assignment.READING
+    HOMEWORK = Assignment.HOMEWORK
+    EXTERNAL = Assignment.EXTERNAL
+    EVENT = Assignment.EVENT
+    REVIEW = Assignment.REVIEW
+
     def __init__(self, username=None, password=None, site=None):
         '''
         Set test defaults
@@ -196,6 +204,7 @@ class User(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
 
 class Teacher(object):
@@ -204,19 +213,28 @@ class Teacher(object):
     '''
     def __init__(self, username=None, password=None):
         '''
-        Initialize with provided or environmental credentials
+        Initialize with provided or environment credentials
         '''
         self.name = username if username is not None \
             else os.environ['TEACHER_USER']
         self.password = password if password is not None \
             else os.environ['TEACHER_PASSWORD']
 
-    def add_assignment(self, assignment):
+    def add_assignment(self, driver, assignment, args):
         '''
         Add an assignment
 
         ToDo: all
         '''
+        for assignment_type in assignment:
+            if assignment_type == '':
+                print('hi')
+        if assignment is 'reading':
+            Assignment.new_reading(driver, args)
+        elif assignment is 'homework':
+            Assignment.new_homework(driver, args)
+        elif assignment is 'external_assignment':
+            print('hi')
 
     def change_assignment(self):
         '''
@@ -224,6 +242,7 @@ class Teacher(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
     def delete_assignment(self):
         '''
@@ -231,6 +250,7 @@ class Teacher(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
     def goto_calendar(self):
         '''
@@ -238,6 +258,7 @@ class Teacher(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
     def goto_performance_forecast(self):
         '''
@@ -245,6 +266,7 @@ class Teacher(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
     def goto_student_scores(self):
         '''
@@ -252,6 +274,7 @@ class Teacher(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
 
 class Student(object):
@@ -273,6 +296,7 @@ class Student(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
     def goto_past_work(self):
         '''
@@ -280,6 +304,7 @@ class Student(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
     def goto_performance_forecast(self):
         '''
@@ -287,6 +312,7 @@ class Student(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
     def practice(self):
         '''
@@ -294,6 +320,7 @@ class Student(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
 
 class Admin(object):
@@ -315,6 +342,7 @@ class Admin(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
     def goto_courses(self):
         '''
@@ -322,6 +350,7 @@ class Admin(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
     def goto_ecosystems(self):
         '''
@@ -329,6 +358,7 @@ class Admin(object):
 
         ToDo: all
         '''
+        raise NotImplementedError
 
 
 class Email(object):
