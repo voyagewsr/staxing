@@ -209,6 +209,14 @@ class Assignment(object):
                         status):
         '''
         Add a new reading assignment
+
+        driver:      WebDriver - Selenium WebDriver instance
+        title:       string - assignment title
+        description: string - assignment description or additional instructions
+        periods:     dict - key:   string <period name> OR 'all'
+                            value: tuple  (<open date>, <close date>)
+        readings:    [string] - chapter and section numbers to include in the
+                                assignment
         '''
         try:
             self.open_assignment_menu(driver)
@@ -225,6 +233,38 @@ class Assignment(object):
                 '//div[contains(@class,"assignment-description")]//textarea' +
                 '[contains(@class,"form-control")]'). \
                 send_keys(description)
+            if 'all' in periods:  # assign the same dates for all periods
+                opens_on, closes_on = periods['all']
+                driver.find_element(By.ID, 'hide-periods-radio').click()
+                driver.find_element(
+                    By.XPATH,
+                    '//div[contains(@class,"-assignment-open-date")]//input'). \
+                    send_keys(opens_on)
+                driver.find_element(
+                    By.XPATH,
+                    '//div[contains(@class,"-assignment-due-date")]//input'). \
+                    send_keys(closes_on)
+            else:
+                count = 0
+                last = len(periods)
+                for period in periods:
+                    count += 1
+                    if count > last:
+                        break
+                    if periods[period] is 'all' or period is 'skip':
+                        continue
+                    opens_on, closes_on = periods[period]
+                    driver.find_element(
+                        By.XPATH,
+                        '//input[@id="period-toggle-' +
+                        '%s"]/../following-sibling::div//input' % count). \
+                        send_keys(opens_on)
+                    driver.find_element(
+                        By.XPATH,
+                        '//input[@id="period-toggle-' +
+                        '%s"]/../following-sibling::div/following-' % count +
+                        'sibling::div//input'). \
+                        send_keys(closes_on)
         except:
             return (False, 'Assignment creation failed')
         raise NotImplementedError
