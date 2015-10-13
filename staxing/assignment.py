@@ -15,6 +15,10 @@ class Assignment(object):
 
     WAIT_TIME = 15
 
+    PUBLISH = 'publish'
+    CANCEL = 'cancel'
+    DRAFT = 'draft'
+
     def __init__(self):
         '''
         Provide a switch-style dictionary to add assignments
@@ -205,6 +209,18 @@ class Assignment(object):
                 get_attribute('class'):
             assignment_menu.click()
 
+    def open_chapter_list(self, driver, section):
+        '''
+        Open the reading chapter list
+        '''
+        chapter = driver.find_element(By.XPATH,
+                                      '//h2[@data-chapter-section="%s"]' %
+                                      section[0])
+        expand_control = chapter.find_element(By.XPATH, '/child::a')
+        if not expand_control.get_attribute('aria_expanded'):
+            expand_control.click()
+        return chapter.find_element(By.XPATH, '..')
+
     def add_new_reading(self, driver, title, description, periods, readings,
                         status):
         '''
@@ -217,6 +233,7 @@ class Assignment(object):
                             value: tuple  (<open date>, <close date>)
         readings:    [string] - chapter and section numbers to include in the
                                 assignment
+        status:      string - 'publish', 'cancel', or 'draft'
         '''
         try:
             self.open_assignment_menu(driver)
@@ -244,7 +261,7 @@ class Assignment(object):
                     By.XPATH,
                     '//div[contains(@class,"-assignment-due-date")]//input'). \
                     send_keys(closes_on)
-            else:
+            else:  # or set the dates for each period: {period: (open, close)}
                 count = 0
                 last = len(periods)
                 for period in periods:
@@ -256,15 +273,59 @@ class Assignment(object):
                     opens_on, closes_on = periods[period]
                     driver.find_element(
                         By.XPATH,
-                        '//input[@id="period-toggle-' +
-                        '%s"]/../following-sibling::div//input' % count). \
+                        '//input[@id="period-toggle-%s"]' % count +
+                        '/../following-sibling::div' +
+                        '//input[contains(@class,"picker")]'). \
                         send_keys(opens_on)
                     driver.find_element(
                         By.XPATH,
-                        '//input[@id="period-toggle-' +
-                        '%s"]/../following-sibling::div/following-' % count +
-                        'sibling::div//input'). \
+                        '//input[@id="period-toggle-%s"]' % count +
+                        '/../following-sibling::div/following-sibling::div' +
+                        '//input[contains(@class,"picker")]'). \
                         send_keys(closes_on)
+            # add reading sections to the assignment
+            driver.find_element(By.ID, 'reading-select').click()
+            for section in readings:
+                if len(section) <= 2:  # select the whole chapter
+                    chapter = driver.find_element(
+                        By.ID,
+                        'chapter-checkbox-%s' % section)
+                    if not chapter.is_selected():
+                        chapter.click()
+                else:
+                    self.open_chapter_list(driver, section)
+                    marked = driver.find_element(
+                        By.XPATH,
+                        '//span[@data-chapter-section=%s]' % section +
+                        '/preceding-sibling::span/input')
+                    if not marked.is_selected():
+                        marked.click()
+            driver.find_element(By.LINK_TEXT, 'Add Readings').click()
+            wait.until(
+                expect.visibility_of_element_located(
+                    (By.XPATH, '//span[text()="Publish"]')
+                )
+            )
+            if status is self.PUBLISH:
+                driver.find_element(
+                    By.XPATH,
+                    '//button[contains(@class,"-publish")]'). \
+                    click()
+            elif status is self.DRAFT:
+                driver.find_element(
+                    By.XPATH,
+                    '//button[contains(@class," -save")]'). \
+                    click()
+            else:
+                driver.find_element(
+                    By.XPATH,
+                    '//button[contains(@aria-role,"close"'). \
+                    click()
+                wait.until(
+                    expect.visibility_of_element_located(
+                        (By.XPATH, '//button[contains(@class,"ok")]')
+                    )
+                ).click()
         except:
             return (False, 'Assignment creation failed')
         raise NotImplementedError

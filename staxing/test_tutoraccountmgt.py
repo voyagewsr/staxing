@@ -42,7 +42,7 @@ browsers = [{
 }]
 # use 1 browser setup
 browsers = [browsers[3]]
-standard_window = (1440, 900)
+standard_window = (1440, 800)
 compressed_window = (700, 500)
 
 
@@ -64,8 +64,8 @@ class TestTutorAcctMgt(unittest.TestCase):
         # resize the window to the standard HISD monitor width
         size = self.driver.get_window_size()
         assert(standard_window == (size['width'], size['height'])), \
-            ('Window size set to: ' + str(*size) +
-             ', not ' + str(*standard_window))
+            ('Window size set to: %sx%s, not %sx%s' %
+             (size['width'], str(*size)))
         # open the test URL and click the login button
         self.driver.get(self.helper.user.url)
         assert('OpenStax Tutor' in self.driver.title), 'Unable to load page'
@@ -159,13 +159,12 @@ class TestTutorAcctMgt(unittest.TestCase):
              ', not ' + str(*standard_window))
         self.driver.get('https://accounts-qa.openstax.org/')
         assert('Sign in with' in self.driver.title), 'Unable to load page'
-        username = self.driver.find_element(By.ID, 'auth_key')
-        username.send_keys('not_a_user_94720475')
-        password = self.driver.find_element(By.ID, 'password')
-        password.send_keys('failed_password')
-        sign_in = self.driver.find_element(By.XPATH, '//button[text()=' +
-                                                     '"Sign in"]')
-        sign_in.click()
+        self.driver.find_element(By.ID, 'auth_key'). \
+            send_keys('not_a_user_94720475')
+        self.driver.find_element(By.ID, 'password'). \
+            send_keys('failed_password')
+        self.driver.find_element(By.XPATH,
+                                 '//button[text()="Sign in"]').click()
         error_message = self.driver.find_element(By.XPATH,
                                                  '//p//strong/parent::*')
         assert('Incorrect' in error_message.text)
@@ -185,19 +184,17 @@ class TestTutorAcctMgt(unittest.TestCase):
         )
         assert(login.is_displayed()), 'Login link not visible'
         login.click()
-        username = self.driver.find_element(By.ID, 'auth_key')
-        username.send_keys(self.helper.teacher.name)
-        password = self.driver.find_element(By.ID, 'password')
-        password.send_keys(self.helper.teacher.password)
-        sign_in = self.driver.find_element(By.XPATH, '//button[text()=' +
-                                           '"Sign in"]')
-        sign_in.click()
-        course = self.wait.until(
+        self.driver.find_element(By.ID, 'auth_key'). \
+            send_keys(self.helper.teacher.name)
+        self.driver.find_element(By.ID, 'password'). \
+            send_keys(self.helper.teacher.password)
+        self.driver.find_element(By.XPATH, '//button[text()="Sign in"]'). \
+            click()
+        self.wait.until(
             expect.element_to_be_clickable(
                 (By.XPATH, '//div[@data-title="Physics"]//a')
             )
-        )
-        course.click()
+        ).click()
         dashboard = self.wait.until(
             expect.element_to_be_clickable(
                 (By.XPATH, '//a[@class="navbar-brand active"]')

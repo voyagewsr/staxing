@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as expect
 from selenium.webdriver.support.ui import WebDriverWait
 from requests import HTTPError
 
-from assignment import Assignment
+from .assignment import Assignment
 
 
 class StaxHelper(object):
@@ -47,7 +47,7 @@ class User(object):
     '''
     General use class functions
     '''
-    import Assignment
+    from .assignment import Assignment
     READING = Assignment.READING
     HOMEWORK = Assignment.HOMEWORK
     EXTERNAL = Assignment.EXTERNAL
