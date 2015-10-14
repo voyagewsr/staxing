@@ -5,7 +5,10 @@ from selenium.webdriver.support import expected_conditions as expect
 from selenium.webdriver.support.ui import WebDriverWait
 from requests import HTTPError
 
-from .assignment import Assignment
+if __name__ == '__main__':
+    from assignment import Assignment
+else:
+    from staxing.assignment import Assignment
 
 
 class StaxHelper(object):
@@ -47,7 +50,6 @@ class User(object):
     '''
     General use class functions
     '''
-    from .assignment import Assignment
     READING = Assignment.READING
     HOMEWORK = Assignment.HOMEWORK
     EXTERNAL = Assignment.EXTERNAL
@@ -169,7 +171,7 @@ class User(object):
         '''
         driver.find_element(By.LINK_TEXT, 'Sign out').click()
 
-    def select_course(self, driver, title, category):
+    def select_course(self, driver, title=None, category=None):
         '''
         Course selection
 
@@ -223,18 +225,30 @@ class Teacher(object):
     def add_assignment(self, driver, assignment, args):
         '''
         Add an assignment
-
+title, description, periods, readings,
+                        status
         ToDo: all
         '''
-        for assignment_type in assignment:
-            if assignment_type == '':
-                print('hi')
+        assign = Assignment()
         if assignment is 'reading':
-            Assignment.new_reading(driver, args)
+            assign.add_new_reading(
+                driver=driver,
+                title=args['title'],
+                description=args['description'],
+                periods=args['periods'],
+                readings=args['readings'],
+                status=args['status'],
+            )
         elif assignment is 'homework':
-            Assignment.new_homework(driver, args)
-        elif assignment is 'external_assignment':
-            print('hi')
+            assign.add_new_homework(driver, args)
+        elif assignment is 'external':
+            assign.add_new_external(driver, args)
+        elif assignment is 'review':
+            assign.add_new_review(driver, args)
+        elif assignment is 'event':
+            assign.add_new_event(driver, args)
+        else:
+            return (False, 'No assignment type provided')
 
     def change_assignment(self):
         '''
@@ -375,3 +389,31 @@ class Email(object):
             else os.environ['TEST_EMAIL_ACCOUNT']
         self.password = password if password is not None \
             else os.environ['TEST_EMAIL_PASSWORD']
+
+
+def main():
+    import datetime
+    today = datetime.date.today()
+    begin = (today + datetime.timedelta(days=3)).strftime('%m/%d/%Y')
+    end = (today + datetime.timedelta(days=6)).strftime('%m/%d/%Y')
+    helper = StaxHelper()
+    driver = StaxHelper.run_on(False)
+    # start the code example
+    helper.user.login(driver)
+    helper.user.select_course(driver, category='biology')
+    reading = 'test-read %s' % Assignment.rword(8)
+    helper.teacher.add_assignment(
+        driver=driver,
+        assignment='reading',
+        args={
+            'title': reading,
+            'description': 'An auto-test assignment',
+            'periods': {'all': (begin, end)},
+            'readings': ['4', '4.1', '4.2', 'ch5', '5.2'],
+            'status': 'draft',
+        }
+    )
+
+if __name__ == "__main__":
+    # execute only if run as a script
+    main()
