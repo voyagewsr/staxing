@@ -73,10 +73,17 @@ class User(object):
             self.url = 'https://' + self.url
         if self.url is None:
             raise(ValueError('URL: "' + str(self.url) + '" is not valid'))
+        self.assignment = Assignment()
 
-    def use_site(self, url=''):
+    def get_site(self, driver):
         '''
-        Change site URL
+        Access the URL website
+        '''
+        return driver.get(self.url)
+
+    def set_site(self, url=''):
+        '''
+        Change the site URL
         '''
         if url is not '':
             self.url = url
@@ -90,34 +97,39 @@ class User(object):
         Branching to deal with standard or compact screen widths
         '''
         url_address = self.url if url is None else url
-        try:
-            # open the URL
-            driver.get(url_address)
-            # if coming from Tutor, click on the login button
-            if 'tutor' in url_address:
-                # check to see if the screen width is normal or condensed
-                if driver.get_window_size()['width'] <= \
-                        StaxHelper.CONDENSED_WIDTH:
-                    # get small-window menu toggle
-                    is_collapsed = driver.find_element(
-                        By.XPATH,
-                        '//button[contains(@class,"navbar-toggle")]'
-                    )
-                    # check if the menu is collapsed and, if yes, open it
-                    if('collapsed' in is_collapsed.get_attribute('class')):
-                        is_collapsed.click()
-                driver.find_element(By.LINK_TEXT, 'Login').click()
-            # enter the username and password
-            driver.find_element(By.ID, 'auth_key'). \
-                send_keys(self.name if username is None else username)
-            driver.find_element(By.ID, 'password'). \
-                send_keys(self.password if password is None else password)
-            # click on the sign in button
-            driver.find_element(
-                By.XPATH, '//button[text()="Sign in"]'
-            ).click()
-        except Exception:
-            return (False, 'Log in failed')
+        # open the URL
+        driver.get(url_address)
+        wait = WebDriverWait(driver, StaxHelper.WAIT_TIME)
+        site = wait.until(
+            expect.visibility_of_element_located(
+                (By.CLASS_NAME, 'navbar-brand')
+            )
+        )
+        if site is None:
+            raise LoginError('Unable to read from URL: %s' % url_address)
+        # if coming from Tutor, click on the login button
+        if 'tutor' in url_address:
+            # check to see if the screen width is normal or condensed
+            if driver.get_window_size()['width'] <= \
+                    StaxHelper.CONDENSED_WIDTH:
+                # get small-window menu toggle
+                is_collapsed = driver.find_element(
+                    By.XPATH,
+                    '//button[contains(@class,"navbar-toggle")]'
+                )
+                # check if the menu is collapsed and, if yes, open it
+                if('collapsed' in is_collapsed.get_attribute('class')):
+                    is_collapsed.click()
+            driver.find_element(By.LINK_TEXT, 'Login').click()
+        # enter the username and password
+        driver.find_element(By.ID, 'auth_key'). \
+            send_keys(self.name if username is None else username)
+        driver.find_element(By.ID, 'password'). \
+            send_keys(self.password if password is None else password)
+        # click on the sign in button
+        driver.find_element(
+            By.XPATH, '//button[text()="Sign in"]'
+        ).click()
         return (True, 'Log in successful')
 
     def logout(self, driver):
@@ -135,13 +147,13 @@ class User(object):
                 raise HTTPError('Not an OpenStax URL')
         except HTTPError as ex:
             raise ex
-        except Exception:
-            return (False, 'Logout failed')
+        except Exception as e:
+            return (False, 'Logout failed: %s - %s' % (str(e), e.value))
         return (True, 'Logout successful')
 
-    def tutor_logout(self, driver):
+    def open_user_menu(self, driver):
         '''
-        Tutor logout helper
+        Hamburger menu opener
 
         ToDo: branching to handle if a toggle is already open
         '''
@@ -159,6 +171,13 @@ class User(object):
                 (By.CLASS_NAME, 'dropdown-toggle')
             )
         ).click()
+
+    def tutor_logout(self, driver):
+        '''
+        Tutor logout helper
+        '''
+        wait = WebDriverWait(driver, StaxHelper.WAIT_TIME)
+        self.open_user_menu(driver)
         wait.until(
             expect.visibility_of_element_located(
                 (By.XPATH, '//button[@aria-label="Sign out"]')
@@ -196,17 +215,24 @@ class User(object):
                      (uses_option, course))
                 )
             ).click()
-        except Exception:
-            return (False, 'Course selection failed')
-        return (True, 'Course %s selected' % course)
+        except Exception as e:
+            return (False, 'Course selection failed: %s - %s' %
+                    (str(e), e.value))
+        return (True, 'Course "%s" selected' % course)
 
-    def view_reference_book(self):
+    def view_reference_book(self, driver):
         '''
         Access the reference book
-
-        ToDo: all
         '''
-        raise NotImplementedError
+        browse = driver.find_element(
+            By.XPATH, '//div/a[contains(@class,"view-reference-guide")]')
+        if browse:
+            browse.click()
+            return
+        self.open_user_menu(driver)
+        driver.find_element(
+            By.XPATH, '//li/a[contains(@class,"view-reference-guide")]'
+        ).click()
 
 
 class Teacher(object):
@@ -225,70 +251,91 @@ class Teacher(object):
     def add_assignment(self, driver, assignment, args):
         '''
         Add an assignment
-title, description, periods, readings,
-                        status
-        ToDo: all
         '''
         assign = Assignment()
-        if assignment is 'reading':
-            assign.add_new_reading(
-                driver=driver,
-                title=args['title'],
-                description=args['description'],
-                periods=args['periods'],
-                readings=args['readings'],
-                status=args['status'],
-            )
-        elif assignment is 'homework':
-            assign.add_new_homework(driver, args)
-        elif assignment is 'external':
-            assign.add_new_external(driver, args)
-        elif assignment is 'review':
-            assign.add_new_review(driver, args)
-        elif assignment is 'event':
-            assign.add_new_event(driver, args)
-        else:
-            return (False, 'No assignment type provided')
+        assign.add[assignment](
+            driver=driver,
+            name=args['title'],
+            description=args['description'],
+            periods=args['periods'],
+            state=args['status'],
+            url=args['url'] if 'url' in args else None,
+            reading_list=args['reading_list'] if 'reading_list' in args else
+            None,
+            problems=args['problems'] if 'problems' in args else None,
+        )
 
-    def change_assignment(self):
+    def change_assignment(self, driver, assignment, args):
         '''
         Alter an existing assignment
-
-        ToDo: all
         '''
-        raise NotImplementedError
+        assign = Assignment()
+        assign.edit[assignment](
+            driver=driver,
+            name=args['title'],
+            description=args['description'],
+            periods=args['periods'],
+            state=args['status'],
+            url=args['url'] if 'url' in args else None,
+            reading_list=args['reading_list'] if 'reading_list' in args else
+            None,
+            problems=args['problems'] if 'problems' in args else None,
+        )
 
-    def delete_assignment(self):
+    def delete_assignment(self, driver, assignment, args):
         '''
         Delete an existing assignment (if available)
-
-        ToDo: all
         '''
-        raise NotImplementedError
+        assign = Assignment()
+        assign.remove[assignment](
+            driver=driver,
+            name=args['title'],
+            description=args['description'],
+            periods=args['periods'],
+            state=args['status'],
+            url=args['url'] if 'url' in args else None,
+            reading_list=args['reading_list'] if 'reading_list' in args else
+            None,
+            problems=args['problems'] if 'problems' in args else None,
+        )
 
-    def goto_calendar(self):
+    def goto_menu_item(self, driver, text):
+        '''
+        Go to a specific user menu item
+        '''
+        if 'courses' in driver.current_url:
+            User.open_user_menu(driver)
+            wait = WebDriverWait(driver, StaxHelper.WAIT_TIME)
+            wait.until(
+                expect.element_to_be_clickable(
+                    (By.LINK_TEXT, text)
+                )
+            ).click()
+
+    def goto_calendar(self, driver):
         '''
         Return the teacher to the calendar dashboard
-
-        ToDo: all
         '''
-        raise NotImplementedError
+        try:
+            driver.find_element(
+                By.XPATH, '//a[contains(@class,"navbar-brand")]'
+            ).click()
+            return
+        except:
+            pass
+        self.goto_menu_item(driver, 'Dashboard')
 
-    def goto_performance_forecast(self):
+    def goto_performance_forecast(self, driver):
         '''
         Access the performance forecast page
-
-        ToDo: all
         '''
-        raise NotImplementedError
+        self.goto_menu_item(driver, 'Performance Forecast')
 
-    def goto_student_scores(self):
+    def goto_student_scores(self, driver):
         '''
         Access the student scores page
-
-        ToDo: all
         '''
-        raise NotImplementedError
+        self.goto_menu_item(driver, 'Student Scores')
 
 
 class Student(object):
@@ -391,6 +438,14 @@ class Email(object):
             else os.environ['TEST_EMAIL_PASSWORD']
 
 
+class LoginError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
 def main():
     import datetime
     today = datetime.date.today()
@@ -409,8 +464,24 @@ def main():
             'title': reading,
             'description': 'An auto-test assignment',
             'periods': {'all': (begin, end)},
-            'readings': ['4', '4.1', '4.2', 'ch5', '5.2'],
+            'reading_list': ['4.0', '4.1', '4.2', 'ch5', '5.2'],
             'status': 'draft',
+        }
+    )
+    homework = 'test-hw %s' % Assignment.rword(8)
+    helper.teacher.add_assignment(
+        driver=driver,
+        assignment='homework',
+        args={
+            'title': homework,
+            'description': 'An auto-test assignment',
+            'periods': {'all': (begin, end)},
+            'problems': {'4.0': '',
+                         '4.1': (4, 8),
+                         '4.2': 'all',
+                         '4.3': ['2102@1', '2104@1', '2175'],
+                         'ch5': 5,
+                         'tutor': 4},
         }
     )
 
