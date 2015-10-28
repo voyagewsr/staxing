@@ -197,28 +197,23 @@ class User(object):
         ToDo: allow selection of course 3 or higher
         '''
         if 'dashboard' not in driver.current_url:
-            return (True, 'No course selection available')
+            return
         if title:
             uses_option = 'title'
             course = title
         elif category:
             uses_option = 'category'
-            course = category
+            course = category.lower()
         else:
-            return (False, 'Unknown course selection "%s"' %
-                    title if title else category)
+            raise LoginError('Unknown course selection "%s"' %
+                             title if title else category)
         wait = WebDriverWait(driver, StaxHelper.WAIT_TIME)
-        try:
-            wait.until(
-                expect.element_to_be_clickable(
-                    (By.XPATH, '//div[@data-%s="%s"]//a' %
-                     (uses_option, course))
-                )
-            ).click()
-        except Exception as e:
-            return (False, 'Course selection failed: %s - %s' %
-                    (str(e), e.value))
-        return (True, 'Course "%s" selected' % course)
+        wait.until(
+            expect.element_to_be_clickable(
+                (By.XPATH, '//div[@data-%s="%s"]//a' %
+                 (uses_option, course))
+            )
+        ).click()
 
     def view_reference_book(self, driver):
         '''
@@ -299,7 +294,7 @@ class Teacher(object):
             problems=args['problems'] if 'problems' in args else None,
         )
 
-    def goto_menu_item(self, driver, text):
+    def goto_menu_item(self, driver, item):
         '''
         Go to a specific user menu item
         '''
@@ -308,7 +303,7 @@ class Teacher(object):
             wait = WebDriverWait(driver, StaxHelper.WAIT_TIME)
             wait.until(
                 expect.element_to_be_clickable(
-                    (By.LINK_TEXT, text)
+                    (By.LINK_TEXT, item)
                 )
             ).click()
 
@@ -476,7 +471,7 @@ def main():
             'title': homework,
             'description': 'An auto-test assignment',
             'periods': {'all': (begin, end)},
-            'problems': {'4.0': '',
+            'problems': {'4.0': None,
                          '4.1': (4, 8),
                          '4.2': 'all',
                          '4.3': ['2102@1', '2104@1', '2175'],

@@ -59,6 +59,82 @@ class TestTutorAcctMgt(unittest.TestCase):
         self.driver.implicitly_wait(15)
         self.wait = WebDriverWait(self.driver, 15)
         self.driver.set_window_size(*standard_window)
+        self.rword = self.helper.user.assignment.rword
+
+    def tearDown(self):
+        self.driver.quit()
+        status = (sys.exc_info() == (None, None, None))
+        self.ps.update_job(self.driver.session_id, passed=status)
+
+    def test_user_registration(self):
+        self.driver.get('https://accounts-qa.openstax.org/')
+        assert('Sign in with' in self.driver.title), 'Unable to load page'
+        self.driver.find_element(By.LINK_TEXT, 'Sign up').click()
+        username = 'testuser_%s' % self.rword(5)
+        first_name = 'Test User'
+        last_name = self.rword(6)
+        self.wait.until(
+            expect.visibility_of_element_located(
+                (By.ID, 'register_username')
+            )
+        ).send_keys(username)
+        self.driver.find_element(By.ID, 'register_password'). \
+            send_keys('password')
+        self.driver.find_element(By.ID, 'register_password_confirmation'). \
+            send_keys('password')
+        self.driver.find_element(
+            By.XPATH, '//input[@class="standard" and @name="commit"]'
+        ).click()
+        self.wait.until(
+            expect.visibility_of_element_located(
+                (By.LINK_TEXT, 'Finish setting up my account')
+            )
+        ).click()
+        self.wait.until(
+            expect.visibility_of_element_located(
+                (By.ID, 'register_username')
+            )
+        ).send_keys(username)
+        self.driver.find_element(By.ID, 'register_title'). \
+            send_keys(self.rword(2))
+        self.driver.find_element(By.ID, 'register_first_name'). \
+            send_keys(first_name)
+        self.driver.find_element(By.ID, 'register_last_name'). \
+            send_keys(last_name)
+        self.driver.find_element(By.ID, 'register_suffix'). \
+            send_keys(self.rword(2))
+        self.driver.find_element(By.ID, 'register_full_name'). \
+            send_keys('%s %s' % (first_name, last_name))
+        self.driver.find_element(By.LINK_TEXT, 'Terms of Use').click()
+        self.wait.until(
+            expect.element_to_be_clickable(
+                (By.XPATH, '//button[@class="close"]')
+            )
+        ).click()
+        self.wait.until(
+            expect.element_to_be_clickable(
+                (By.LINK_TEXT, 'Privacy Policy')
+            )
+        ).click()
+        self.wait.until(
+            expect.element_to_be_clickable(
+                (By.XPATH, '//button[@class="close"]')
+            )
+        ).click()
+        i_agree = self.wait.until(
+            expect.element_to_be_clickable(
+                (By.ID, 'register_i_agree')
+            )
+        )
+        if not i_agree.is_selected():
+            i_agree.click()
+        self.wait.until(
+            expect.element_to_be_clickable(
+                (By.ID, 'register_submit')
+            )
+        ).click()
+        assert('Your Account' in self.driver.title), 'Incorrect URL: %s' % \
+            self.driver.current_url
 
     def test_user_login_standard(self):
         # resize the window to the standard HISD monitor width
@@ -293,7 +369,34 @@ class TestTutorAcctMgt(unittest.TestCase):
         reset_message = reset_message.find_element(By.XPATH, '..')
         assert('reset successfully' in reset_message.text)
 
-    def tearDown(self):
-        self.driver.quit()
-        status = (sys.exc_info() == (None, None, None))
-        self.ps.update_job(self.driver.session_id, passed=status)
+    def test_ost_logo_click_user_not_logged_in(self):
+        url = 'https://tutor-qa.openstax.org/'
+        anchor = '#home'
+        self.driver.get(url)
+        assert('OpenStax Tutor' in self.driver.title), 'Unable to load page'
+        self.wait.until(
+            expect.element_to_be_clickable(
+                (By.XPATH,
+                 '//a[@class="navbar-brand" and @href="%s"]' % anchor)
+            )
+        ).click()
+        self.wait.until(
+            expect.element_to_be_clickable(
+                (By.XPATH,
+                 '//a[@class="navbar-brand" and @href="%s"]' % anchor)
+            )
+        )
+        assert(self.driver.current_url is (url + anchor))
+
+    def test_ost_logo_click_user_logged_in(self):
+        self.helper.user.login(self.driver, 'teacher01', 'password')
+        assert('OpenStax Tutor' in self.driver.title), 'Unable to load page'
+        self.wait.until(
+            expect.element_to_be_clickable(
+                (By.XPATH,
+                 '//a[contains(@class,"navbar-brand") ' +
+                 'and @href="/dashboard/"]')
+            )
+        ).click()
+
+        assert(False), 'Incomplete'
