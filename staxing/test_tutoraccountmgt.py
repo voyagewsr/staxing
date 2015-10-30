@@ -306,7 +306,7 @@ class TestTutorAcctMgt(unittest.TestCase):
         assert('Password reset' in reset_message.text), 'Reset failed'
         body = self.driver.find_element(By.TAG_NAME, 'body')
         import platform
-        if platform.system() is 'Darwin':  # Mac
+        if platform.system() == 'Darwin':  # Mac
             body.send_keys(Keys.COMMAND + 't')
         else:
             body.send_keys(Keys.CONTROL + 't')
@@ -386,17 +386,32 @@ class TestTutorAcctMgt(unittest.TestCase):
                  '//a[@class="navbar-brand" and @href="%s"]' % anchor)
             )
         )
-        assert(self.driver.current_url is (url + anchor))
+        full_url = url + anchor
+        assert(self.driver.current_url == full_url), 'Not at dashboard'
 
     def test_ost_logo_click_user_logged_in(self):
         self.helper.user.login(self.driver, 'teacher01', 'password')
+        url = self.helper.user.url
+        if url[-1:] == '/':
+            url = url[:-1]
+        route = '/dashboard/'
         assert('OpenStax Tutor' in self.driver.title), 'Unable to load page'
         self.wait.until(
             expect.element_to_be_clickable(
                 (By.XPATH,
                  '//a[contains(@class,"navbar-brand") ' +
-                 'and @href="/dashboard/"]')
+                 'and @href="%s"]' % route)
             )
         ).click()
-
-        assert(False), 'Incomplete'
+        local_wait = WebDriverWait(self.driver, 5)
+        try:
+            local_wait.until(
+                expect.element_to_be_clickable(
+                    (By.CLASS_NAME, 'tutor-course-item')
+                )
+            )
+        except:
+            assert('calendar' in self.driver.current_url), 'Not at calendar'
+            return
+        full_url = url + route
+        assert(self.driver.current_url == full_url), 'Not at dashboard'
