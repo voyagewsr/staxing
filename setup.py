@@ -7,7 +7,7 @@ setup(
     scripts=[],
     # zip_safe=True,
     # eager_resources=[],
-    install_requires=[],
+    install_requires=[pastasauce],
     # dependency_links=[],
     # namespace_packages=[],
     include_package_data=True,
@@ -27,7 +27,7 @@ setup(
     license='Creative Commons Attribution 4.0 International Public License',
     keywords='',
     url='http://openstax.org',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     # test_suite=''
     # tests_require=[],
     # test_loader='',

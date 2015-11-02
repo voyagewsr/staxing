@@ -10,6 +10,9 @@ import datetime
 from pastasauce import PastaSauce, PastaDecorator
 from . import StaxHelper
 
+INCOMPLETE = True
+if INCOMPLETE:
+    import pytest
 
 browsers = [{
     "platform": "Windows 10",
@@ -54,15 +57,19 @@ class TestTutorTeacher(unittest.TestCase):
         self.ps = PastaSauce()
         self.helper = StaxHelper()
         self.desired_capabilities['name'] = self.id()
+        teacher = self.helper.user.name
+        teacher_password = self.helper.user.password
         self.driver = StaxHelper.run_on(
             StaxHelper.LOCAL, self.ps, self.desired_capabilities
         )
         self.driver.implicitly_wait(15)
         self.wait = WebDriverWait(self.driver, 15)
         self.driver.set_window_size(*standard_window)
-        self.helper.user.login(self.driver, 'teacher01', 'password',
-                               'https://tutor-qa.openstax.org/')
+        self.helper.user.login(self.driver, teacher, teacher_password,
+                               self.helper.user.url)
         self.helper.user.select_course(self.driver, category='Physics')
+
+        # # # TODO: setup test assignments # # #
 
     def tearDown(self):
         ''''''
@@ -82,3 +89,83 @@ class TestTutorTeacher(unittest.TestCase):
             )
         ).text
         assert(cal_date == today), 'Calendar date is not %s' % today
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_student_scores(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_reference_book(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_class_roster(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_removes_a_student_from_class(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_moves_a_student_between_periods(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_reading_analytics_aggregate(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_performance_forecast_aggregate(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_single_student_performance_forecast(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_external_summary(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_homework_summary(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_reading_summary(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_event_summary(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_review_summary(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_single_student_homework(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_class_homework_details(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_single_student_reading(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_class_reading_details(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_single_student_review(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_views_class_review_details(self):
+        ''''''
+
+    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    def test_teacher_export_matches_student_scores(self):
+        ''''''
