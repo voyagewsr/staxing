@@ -10,8 +10,8 @@ import datetime
 from pastasauce import PastaSauce, PastaDecorator
 from . import StaxHelper
 
-INCOMPLETE = True
-if INCOMPLETE:
+NOT_STARTED = True
+if NOT_STARTED:
     import pytest
 
 browsers = [{
@@ -77,7 +77,7 @@ class TestTutorTeacher(unittest.TestCase):
         status = (sys.exc_info() == (None, None, None))
         self.ps.update_job(self.driver.session_id, passed=status)
 
-    def test_teacher_sees_calendar(self):
+    def test_teacher_views_calendar(self):
         ''''''
         today = datetime.date.today()
         today = today.strftime('%B %Y')
@@ -90,82 +90,82 @@ class TestTutorTeacher(unittest.TestCase):
         ).text
         assert(cal_date == today), 'Calendar date is not %s' % today
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_student_scores(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_reference_book(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_class_roster(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_removes_a_student_from_class(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_moves_a_student_between_periods(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_reading_analytics_aggregate(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_performance_forecast_aggregate(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_single_student_performance_forecast(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_external_summary(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_homework_summary(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_reading_summary(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_event_summary(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_review_summary(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_single_student_homework(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_class_homework_details(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_single_student_reading(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_class_reading_details(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_single_student_review(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_class_review_details(self):
         ''''''
 
-    @pytest.mark.skipif(INCOMPLETE, reason='Incomplete')
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_export_matches_student_scores(self):
         ''''''
