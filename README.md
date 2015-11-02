@@ -1,21 +1,21 @@
 #StaxHelper
 ##Constants:
-<code>LOCAL</code>  Use ChromeDriver locally
-<code>REMOTE</code> Use Sauce Labs
-<code>CONDENSED_WIDTH</code>    Compact screen max width
-<code>WAIT_TIME</code>  Standard time in seconds to wait for a command
-	<code>READING</code>   Assignment type: reading
-	<code>HOMEWORK</code>	Assignment type: homework
-	<code>EXTERNAL<code>   Assignment type: external
-	<code>EVENT</code> Assignment type: event
-	<code>REVIEW</code>    Assignment type: review
+<code>LOCAL</code>  <pre>Use ChromeDriver locally</pre>
+<code>REMOTE</code> <pre>Use Sauce Labs</pre>
+<code>CONDENSED_WIDTH</code>    <pre>Compact screen max width</pre>
+<code>WAIT_TIME</code>  <pre>Standard time in seconds to wait for a command</pre>
+	<code>READING</code>   <pre>Assignment type: reading</pre>
+	<code>HOMEWORK</code>	<pre>Assignment type: homework</pre>
+	<code>EXTERNAL<code>   <pre>Assignment type: external</pre>
+	<code>EVENT</code> <pre>Assignment type: event</pre>
+	<code>REVIEW</code>    <pre>Assignment type: review</pre>
 
 ##Methods:
 -------
-<code>StaxHelper.run_on</code>  Run tests locally or on Sauce Labs
-<code>_Class Method_ remote=True</code> (bool)
-<code>pasta_user=None</code>    (pastasauce.PastaSauce)
-<code>capabilities=None</code>  (dict)
+<code>StaxHelper.run_on</code>  <pre>Run tests locally or on Sauce Labs</pre>
+<code>_Class Method_ remote=True</code> <pre>(<code>bool</code>)</pre>
+<code>pasta_user=None</code>    <pre>(<code>pastasauce.PastaSauce</code>)</pre>
+<code>capabilities=None</code>  <pre>(<code>dict</code>)</pre>
 
 <code>user	# A user object
  	username=None (str)
