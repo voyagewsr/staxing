@@ -78,5 +78,61 @@ class TestTutorStudent(unittest.TestCase):
         self.ps.update_job(self.driver.session_id, passed=status)
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_student_sees_this_week(self):
+    def test_student_views_dashboard(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_views_all_past_work(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_views_reference_book(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_works_a_standard_reading(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_works_an_intro_reading(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_works_a_homework(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_practices_weakest_topics_from_dashboard(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_practices_specific_topic_from_dashboard(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_views_complete_performance_forecast(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_practices_all_topics_from_forecast(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_practices_one_chapter_from_forecast(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_practices_specific_topic_from_forecast(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_works_an_external_assignment(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_reviews_a_finished_reading(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_student_reviews_a_finished_homework(self):
         ''''''

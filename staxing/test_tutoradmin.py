@@ -78,9 +78,69 @@ class TestTutorAdmin(unittest.TestCase):
         self.ps.update_job(self.driver.session_id, passed=status)
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_student_views_this_week(self):
+    def test_admin_add_period_to_a_course(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_student_views_all_past_work(self):
+    def test_admin_changes_period_name(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_adds_student_to_period(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_removes_student_from_course(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_moves_student_to_another_period(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_imports_a_new_ecosystem_book(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_edits_a_course(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_impersonates_a_teacher(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_impersonates_a_student(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_creates_a_new_user_account(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_adds_a_teacher_to_a_course(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_creates_a_district(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_edits_a_district(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_deletes_a_district(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_creates_a_school(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_edits_a_school(self):
+        ''''''
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_admin_deletes_a_school(self):
         ''''''
