@@ -5,10 +5,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as expect
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.action_chains import ActionChains
 
 from pastasauce import PastaSauce, PastaDecorator
 from . import StaxHelper
 
+NOT_STARTED = True
+if NOT_STARTED:
+    import pytest
 
 browsers = [{
     "platform": "Windows 10",
@@ -94,7 +98,7 @@ class TestTutorAcctMgt(unittest.TestCase):
             expect.visibility_of_element_located(
                 (By.ID, 'register_username')
             )
-        ).send_keys(username)
+        )
         self.driver.find_element(By.ID, 'register_title'). \
             send_keys(self.rword(2))
         self.driver.find_element(By.ID, 'register_first_name'). \
@@ -330,7 +334,7 @@ class TestTutorAcctMgt(unittest.TestCase):
                 )
             )
         except:
-            raise(AssertionError('Email message not received'))
+            assert(False), 'Email message not received'
         reset_email.click()
         try:
             reset_link = self.wait.until(
@@ -339,8 +343,22 @@ class TestTutorAcctMgt(unittest.TestCase):
                 )
             )
         except:
-            raise(AssertionError('Oops, wrong e-mail message'))
+            assert(False), 'Wrong e-mail message selected'
         link = reset_link.get_attribute('href')
+        self.driver.find_element(
+            By.XPATH,
+            '//a[@title="Gmail" and contains(@href,"inbox")]'
+        ).click()
+        reset_email = self.wait.until(
+            expect.visibility_of_element_located(
+                (By.CLASS_NAME, 'y6')
+            )
+        )
+        trash_can = self.driver.find_element(By.LINK_TEXT, 'Trash')
+        chain = ActionChains(self.driver). \
+            move_to_element(reset_email). \
+            drag_and_drop(reset_email, trash_can)
+        chain.perform()
         self.driver.close()
         self.driver = StaxHelper.run_on(
             StaxHelper.LOCAL, self.ps, self.desired_capabilities
@@ -415,3 +433,7 @@ class TestTutorAcctMgt(unittest.TestCase):
             return
         full_url = url + route
         assert(self.driver.current_url == full_url), 'Not at dashboard'
+
+    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
+    def test_user_updates_profile_information(self):
+        ''''''

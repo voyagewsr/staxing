@@ -85,7 +85,7 @@ class User(object):
         '''
         Change the site URL
         '''
-        if url is not '':
+        if url != '':
             self.url = url
         return self.url
 

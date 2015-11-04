@@ -1,11 +1,11 @@
 import unittest
 import sys
 
-from selenium.webdriver.common.by import By
+# from selenium.webdriver.common.by import By
 # from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as expect
+# from selenium.webdriver.support import expected_conditions as expect
 from selenium.webdriver.support.ui import WebDriverWait
-import datetime
+# import datetime
 
 from pastasauce import PastaSauce, PastaDecorator
 from . import StaxHelper
@@ -51,21 +51,21 @@ compressed_window = (700, 500)
 
 
 @PastaDecorator.on_platforms(browsers)
-class TestTutorTeacher(unittest.TestCase):
+class TestTutorStudent(unittest.TestCase):
     ''''''
     def setUp(self):
         self.ps = PastaSauce()
         self.helper = StaxHelper()
         self.desired_capabilities['name'] = self.id()
-        teacher = self.helper.user.name
-        teacher_password = self.helper.user.password
+        student = self.helper.student.name
+        student_password = self.helper.student.password
         self.driver = StaxHelper.run_on(
             StaxHelper.LOCAL, self.ps, self.desired_capabilities
         )
         self.driver.implicitly_wait(15)
         self.wait = WebDriverWait(self.driver, 15)
         self.driver.set_window_size(*standard_window)
-        self.helper.user.login(self.driver, teacher, teacher_password,
+        self.helper.user.login(self.driver, student, student_password,
                                self.helper.user.url)
         self.helper.user.select_course(self.driver, category='Physics')
 
@@ -77,95 +77,62 @@ class TestTutorTeacher(unittest.TestCase):
         status = (sys.exc_info() == (None, None, None))
         self.ps.update_job(self.driver.session_id, passed=status)
 
-    def test_teacher_views_calendar(self):
-        ''''''
-        today = datetime.date.today()
-        today = today.strftime('%B %Y')
-        cal_date = self.wait.until(
-            expect.presence_of_element_located(
-                (By.XPATH,
-                 '//div[contains(@class,"calendar-header-label")]' +
-                 '/span')
-            )
-        ).text
-        assert(cal_date == today), 'Calendar date is not %s' % today
-
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_student_scores(self):
+    def test_student_views_dashboard(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_reference_book(self):
+    def test_student_views_all_past_work(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_class_roster(self):
+    def test_student_views_reference_book(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_removes_a_student_from_class(self):
+    def test_student_works_a_standard_reading(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_moves_a_student_between_periods(self):
+    def test_student_works_an_intro_reading(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_reading_analytics_aggregate(self):
+    def test_student_works_a_homework(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_performance_forecast_aggregate(self):
+    def test_student_practices_weakest_topics_from_dashboard(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_single_student_performance_forecast(self):
+    def test_student_practices_specific_topic_from_dashboard(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_external_summary(self):
+    def test_student_views_complete_performance_forecast(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_homework_summary(self):
+    def test_student_practices_all_topics_from_forecast(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_reading_summary(self):
+    def test_student_practices_one_chapter_from_forecast(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_event_summary(self):
+    def test_student_practices_specific_topic_from_forecast(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_review_summary(self):
+    def test_student_works_an_external_assignment(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_single_student_homework(self):
+    def test_student_reviews_a_finished_reading(self):
         ''''''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_class_homework_details(self):
-        ''''''
-
-    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_single_student_reading(self):
-        ''''''
-
-    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_class_reading_details(self):
-        ''''''
-
-    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_single_student_review(self):
-        ''''''
-
-    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_views_class_review_details(self):
-        ''''''
-
-    @pytest.mark.skipif(NOT_STARTED, reason='Not started')
-    def test_teacher_export_matches_student_scores(self):
+    def test_student_reviews_a_finished_homework(self):
         ''''''
