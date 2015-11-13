@@ -94,93 +94,130 @@ class TestTutorTeacher(unittest.TestCase):
     def test_teacher_views_student_scores(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # click on student scores
+        # 'courses' in URL
+        assert(), ''
         self.helper.teacher.goto_student_scores(self.driver)
+        # verify see 'Student Scores'
+        assert(), ''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_reference_book(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)  
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)  
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')      
+        # self.helper.user.select_course(self.driver, category='Physics')      
         # click on Browse the book
+        # 'courses' in URL 
+        assert(), ''
         self.helper.user.view_reference_book(self.driver)
+        # verify see ToC
+        assert(), ''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_class_roster(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)         
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)         
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # click on link for the user name
         self.driver.find_element(By.LINK_TEXT, self.helper.user.name).click()
+        # verify 'Course Roster' in the drop list after clicking the name
+        assert(), ''
         # click on link Course Roster
         self.driver.find_element(By.LINK_TEXT, 'Course Roster').click()
+        # verify 'Roster' in the page
+        assert(), ''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_removes_a_student_from_class(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)
         # go to course roster
         self.helper.user.select_course(self.driver, category='Physics')
+        # verify 'Course Roster' in the drop list after clicking the name
+        assert(), ''
         self.driver.find_element(By.LINK_TEXT, self.helper.user.name).click()
         self.driver.find_element(By.LINK_TEXT, 'Course Roster').click()
+        # verify 'Roster' in the page
+        assert(), ''
+        # verify a student with a certain name in class
+        assert(), ''
+        # verify a button with 'Drop' for that student in the page
+        assert(), ''
         # click on Drop for a student
         self.driver.find_element(By.XPATH, '//div[@class="tab-content"]/div[1]/div/table/tbody/tr[2]/td[3]/a[2]/span').click()
+        # verify another button with 'Drop' in the page
+        assert(), ''
         # confirm to drop
         self.driver.find_element(By.CSS_SELECTOR, 'button.btn.btn-danger').click()
+        # verify that student not in class now
+        assert(), ''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_moves_a_student_between_periods(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)
         # go to course roster
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         self.driver.find_element(By.LINK_TEXT, self.helper.user.name).click()
         self.driver.find_element(By.LINK_TEXT, 'Course Roster').click()
+        # verify it is the 1st period
+        # verify a student exist in course
+        assert(), ''
+        # verify the 'Change Period' button exist for the student
+        assert(), ''
         # click on Change Period
         self.driver.find_element(By.LINK_TEXT, 'Change Period').click()
         # choose the period to change to
         self.driver.find_element(By.XPATH, '//div[@class="popover-content"]//a[.="2nd"]').click()
+        # verify that the student is now in second period
+        assert(), ''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_reading_analytics_aggregate(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)
         # select a course 
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # go to calendar
         self.helper.teacher.goto_calendar(self.driver)
+        # verify 'calendar' in URL
+        assert(), ''
         # click on a reading on the calendar, this is calendar specific so the current one might not exist
         self.driver.find_element(By.XPATH, '//div[@class="col-xs-12"]//label[.="HW Chapter 3"]').click()
+        # verify 'Review Metrics' in the pop up window
+        assert(), ''
         # click on Review Metrics
         self.driver.find_element(By.LINK_TEXT, 'Review Metrics').click()
+        # verify 'summary' in URL
+        assert(), ''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_performance_forecast_aggregate(self):
