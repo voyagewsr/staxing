@@ -223,86 +223,111 @@ class TestTutorTeacher(unittest.TestCase):
     def test_teacher_views_performance_forecast_aggregate(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
+        # 'courses' in URL 
+        assert(), ''
         # go to performance forcast
         self.helper.teacher.goto_performance_forecast(self.driver)
+        # verify "Performance Forecast" shows in the page
+        assert(), ''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_single_student_performance_forecast(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # click on student scores
         self.helper.teacher.goto_student_scores(self.driver)
+        # verify see 'Student Scores'
+        assert(), ''
+        # verify that "Lily Bart" is in student scores
+        assert(), ''
         # select and click on a student's name (name varies for students and courses)
         self.driver.find_element(By.LINK_TEXT, 'Lily Bart').click()
-        # verify it shows the student's performance forecast
+        # verify see "Performance Forecast"
+        assert(), ''
+        # verify see the student's name "Lily Bart"
+        assert(), ''
+
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_external_summary(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)        
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)        
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # go to calendar
         self.helper.teacher.goto_calendar(self.driver)
         # click on an external assignment on the calendar
 
+        #@!@@##@#$
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_homework_summary(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)        
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)        
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # go to calendar
         self.helper.teacher.goto_calendar(self.driver)
+        # verify 'calendar' in URL
+        assert(), ''
+        # verify a certain homework assignment exist on the calendar
+        assert(), ''
         # click on a homework assignment on the calendar
         self.driver.find_element(By.XPATH, '//div[@class="col-xs-12"]//label[.="HW Chapter 3"]').click()
+        # verfiy homework title is displayed
+        assert(), ''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_reading_summary(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)        
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                        self.helper.user.url)        
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # go to calendar
         self.helper.teacher.goto_calendar(self.driver)
+        # assert 'calendar' in URL
+        assert(), ''
+        # verify a reading in on the calendar
+        assert(), ''
         # click on a reading assignment on the calendar
         self.driver.find_element(By.XPATH, '//div[@class="col-xs-12"]//label[.="Read 3.1 Acceleration Pt1"]').click()
+        # verify the reading title is shown
+        assert(), ''
 
     @pytest.mark.skipif(NOT_STARTED, reason='Not started')
     def test_teacher_views_event_summary(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)        
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)        
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # go to calendar
         self.helper.teacher.goto_calendar(self.driver)
         # click on an event on the calendar
@@ -316,12 +341,12 @@ class TestTutorTeacher(unittest.TestCase):
     def test_teacher_views_single_student_homework(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url) 
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url) 
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # go to student scores
         self.helper.teacher.goto_student_scores(self.driver)
         # click on a student's homework
@@ -337,12 +362,12 @@ class TestTutorTeacher(unittest.TestCase):
     def test_teacher_views_single_student_reading(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url) 
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url) 
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # click on student scores
         self.helper.teacher.goto_student_scores(self.driver)
         # click on a student's reading
@@ -365,12 +390,12 @@ class TestTutorTeacher(unittest.TestCase):
     def test_teacher_export_matches_student_scores(self):
         ''''''
         # login teacher
-        self.helper.user.login(self.driver, 
-                               self.helper.user.name, 
-                               self.helper.user.password,
-                               self.helper.user.url)
+        # self.helper.user.login(self.driver, 
+        #                       self.helper.user.name, 
+        #                       self.helper.user.password,
+        #                       self.helper.user.url)
         # select a course
-        self.helper.user.select_course(self.driver, category='Physics')
+        # self.helper.user.select_course(self.driver, category='Physics')
         # click on student scores
         self.helper.teacher.goto_student_scores(self.driver)
         # generate export
